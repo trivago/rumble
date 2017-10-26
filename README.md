@@ -81,9 +81,9 @@ This file must return an array with your dynamodb configuration. e.g:
 ```php
 <?php
 
+$credentials = new \Aws\Credentials\Credentials(AWS_KEY, AWS_SECRET);
 return [
-    'region' => '',
-    'key' => '',
-    'secret' => '',
-    'endpoint' => ''
- ];
+    'credentials' => $credentials,
+    'region'      => AWS_REGION,
+    'version'     => 'latest',
+];
