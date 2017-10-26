@@ -95,7 +95,7 @@ class MigrateCommand extends Command
         $marsh = new Marshaler();
         $ranMigrations = [];
 
-        foreach ($result->getAll()['Items'] as $item) {
+        foreach ($result->get('Items') as $item) {
             $ranMigrations[] = $marsh->unmarshalItem($item)['migration'];
         }
         return $ranMigrations;
