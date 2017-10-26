@@ -37,11 +37,11 @@ The below code sample shows the minimum required params to create a dynamodb tab
 The ```up``` method, is the only required method to be implemented by every migration file you create.
 ```php
 <?php
-use Rumble/Migration;
+use Rumble\Migration;
 
 class CreateAppRecordsTable extends Migration
 {
-    public funtion up()
+    public function up()
     {
         $table = $this->table('app_records'); //table name
         $table->addAttribute('app_uid', 'S'); //primary key data type - String(S)
@@ -59,14 +59,14 @@ The ```seed``` method is the only required method to be implemented by every see
 
 ```php
 <?php
-use Rumble/Seeder;
+use Rumble\Seeder;
 
 class AppRecordsTableSeeder extends Seeder 
 {
     public function seed()
     {
         $table = $this->table('app_records');
-        $table->addItem(['app_uid' => 'x435-n956-00jX-u2fX', 'uninstall' => ['reason' => 'Still thinking of one.']);
+        $table->addItem(['app_uid' => 'x435-n956-00jX-u2fX', 'uninstall' => ['reason' => 'Still thinking of one.']]);
         $table->addItem(['app_uid' => '944-jjU0-o0Hi-y4hh4', 'events' => ['action' => 'click', 'date' => '2017-04-10']]); 
         $table->save();
     }
@@ -81,9 +81,10 @@ This file must return an array with your dynamodb configuration. e.g:
 ```php
 <?php
 
-$credentials = new \Aws\Credentials\Credentials(AWS_KEY, AWS_SECRET);
+$credentials = new \Aws\Credentials\Credentials('key', 'secret');
 return [
     'credentials' => $credentials,
-    'region'      => AWS_REGION,
-    'version'     => 'latest',
+    'region'      => 'us-east-1',
+    'endpoint'    => 'http://localhost:8000/',
+    'version'     => 'latest'
 ];
