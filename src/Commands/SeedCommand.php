@@ -3,7 +3,7 @@
 namespace Rumble\Commands;
 
 use Rumble\Resolver;
-use Aws\DynamoDB\Marshaler;
+use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -49,6 +49,7 @@ class SeedCommand extends Command
      * Handle the "seed" command.
      *
      * @param $classes
+     * @throws \Exception
      */
     private function runSeeder($classes)
     {
