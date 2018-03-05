@@ -1,5 +1,5 @@
 {
-    "name": "en0ma/rumble",
+    "name": "freitasmurillo/rumble",
     "description": "A dynamodb migration tool",
     "type": "library",
     "minimum-stability": "stable",
