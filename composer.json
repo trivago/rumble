@@ -13,6 +13,13 @@
         {
             "name": "Lawrence Enehizena",
             "email": "lawstands@gmail.com"
+<<<<<<< Updated upstream
+=======
+        },
+        {
+            "name": "Murillo Brendel Freitas",
+            "email": "murillobrendelfreitas@gmail.com"
+>>>>>>> Stashed changes
         }
     ],
     "require": {
@@ -22,7 +29,7 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
-    "bin": ["rumble"],
+    "bin": ["bin/rumble"],
     "autoload": {
         "psr-4": {
             "Rumble\\": "src/"

@@ -1,6 +1,6 @@
-## Ignore Visual Studio temporary files, build results, and
-/vendor/
+##This file MUST contain only project files. Please put IDE's file in a global .gitignore
+
 rumble.php
-/migrations
-/seeds
-.idea
+migrations/
+seeds/
+vendor/

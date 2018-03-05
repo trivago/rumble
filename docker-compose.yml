@@ -1,0 +1,10 @@
+version: '3'
+services:
+  migration:
+    image: php:7-alpine
+    volumes:
+      - ./:/
+    links:
+      - dynamo
+  dynamo:
+    image: cnadiminti/dynamodb-local:latest
