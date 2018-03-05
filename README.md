@@ -75,16 +75,13 @@ class AppRecordsTableSeeder extends Seeder
 ```
 
 ### **Database Configuration**
-```rumble``` uses a ```rumble.php``` file as its configuration file. You have to create this file at the root of your project.
-This file must return an array with your dynamodb configuration. e.g:
+```rumble``` uses ```environment variables``` as its configuration.  
+These variables don't have any default value so you HAVE to set them all.  
+I'll show you how to propel configure it to use a local environment.
 
-```php
-<?php
-
-$credentials = new \Aws\Credentials\Credentials('key', 'secret');
-return [
-    'credentials' => $credentials,
-    'region'      => 'us-east-1',
-    'endpoint'    => 'http://localhost:8000/',
-    'version'     => 'latest'
-];
+```
+AWS_ACCESS_KEY_ID=__YOUR_AWS_ID__
+AWS_SECRET_ACCESS_KEY=__YOUR_AWS_SECRET__
+AWS_DYNAMO_REGION=us-east-1
+AWS_DYNAMO_ENDPOINT=http://localhost:8000/
+AWS_DYNAMO_VERSION=latest

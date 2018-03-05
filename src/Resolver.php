@@ -2,6 +2,8 @@
 
 namespace Rumble;
 
+use Aws\Credentials\Credentials;
+
 trait Resolver
 {
     /**
@@ -18,11 +20,11 @@ trait Resolver
             throw new \Exception("{$dir} directory not found.");
         }
 
-        $dirHandler  = opendir($dir);
+        $dirHandler = opendir($dir);
         $classes = [];
         while (false != ($file = readdir($dirHandler))) {
             if ($file != "." && $file != "..") {
-                require_once("$dir"."/".$file);
+                require_once("$dir" . "/" . $file);
                 $classes[] = $this->buildClass($file);;
             }
         }
@@ -59,19 +61,24 @@ trait Resolver
      */
     protected function getConfig()
     {
-        $configFile = 'rumble.php';
-        if (!file_exists($configFile)) {
-            throw new \Exception("The rumble.php configuration file is not found.");
+        if (!getenv("AWS_ACCESS_KEY_ID")
+            || !getenv("AWS_SECRET_ACCESS_KEY")
+            || !getenv("AWS_DYNAMO_REGION")
+            || !getenv("AWS_DYNAMO_ENDPOINT")
+            || !getenv("AWS_DYNAMO_VERSION")
+        ) {
+            throw new \Exception("The configuration variables are not set. Please set the environment variables.");
         }
 
-        ob_start();
-        $configArray = include($configFile);
-        ob_end_clean();
-
-        if (!is_array($configArray)) {
-            throw new \Exception("rumble PHP file must return an array.");
-        }
-        return $configArray;
+        return [
+            'credentials' => new Credentials(
+                getenv("AWS_ACCESS_KEY_ID"),
+                getenv("AWS_SECRET_ACCESS_KEY")
+            ),
+            'region' => getenv("AWS_DYNAMO_REGION"),
+            'endpoint' => getenv("AWS_DYNAMO_ENDPOINT"),
+            'version' => getenv("AWS_DYNAMO_VERSION")
+        ];
     }
 
 }
