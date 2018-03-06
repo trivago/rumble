@@ -65,7 +65,7 @@ class MigrateCommand extends Command
         $pendingMigrations = $this->getPendingMigrations($classes, $ranMigrations);
 
         if (count($pendingMigrations) == 0) {
-            echo "Nothing new to migrate";
+            echo "Nothing new to migrate \n";
             return;
         }
 

@@ -24,7 +24,10 @@ trait Resolver
         $classes = [];
         while (false != ($file = readdir($dirHandler))) {
             if ($file != "." && $file != "..") {
-                require_once("$dir" . "/" . $file);
+                if (is_dir("{$dir}/{$file}")) {
+                    return self::getClasses("{$dir}/{$file}");
+                }
+                require_once("{$dir}/{$file}");
                 $classes[] = $this->buildClass($file);;
             }
         }
