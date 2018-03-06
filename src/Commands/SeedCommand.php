@@ -6,8 +6,6 @@ use Rumble\Resolver;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class SeedCommand extends Command
 {
@@ -25,23 +23,16 @@ class SeedCommand extends Command
     {
         $this
             ->setName('seed')
-            ->setDescription('Seeds dynamoDb tables with sample data.')
-        ;
+            ->setDescription('Seeds dynamoDb tables with sample data.');
     }
 
-    /**
-     * @param InputInterface $input
-     * @param OutputInterface $output
-     */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute()
     {
         try {
             $classes = $this->getClasses($this->directory);
             $this->runSeeder($classes);
-
-        } catch(\Exception $e) {
-            echo "Seed Error: {$e->getMessage()}".PHP_EOL;
-            exit();
+        } catch (\Exception $e) {
+            echo "Seed Error: {$e->getMessage()}" . PHP_EOL;
         }
     }
 
@@ -53,10 +44,10 @@ class SeedCommand extends Command
      */
     private function runSeeder($classes)
     {
-        $dynamoDbClient =  DynamoDbClient::factory($this->getConfig());
+        $dynamoDbClient = new DynamoDbClient($this->getConfig());
         $transformer = new Marshaler();
-        
-        foreach($classes as $class) {
+
+        foreach ($classes as $class) {
             $migration = new $class($dynamoDbClient, $transformer);
             $migration->seed();
         }

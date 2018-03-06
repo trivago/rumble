@@ -54,8 +54,8 @@ abstract class Seeder
         $attibutes = $this->marshaler->marshalItem($data);
 
         $item = [];
-        foreach($attibutes as $attribute => $value) {
-           $item[$attribute] = $value;
+        foreach ($attibutes as $attribute => $value) {
+            $item[$attribute] = $value;
         }
         $this->items[] = $item;
         return $this;
@@ -68,17 +68,20 @@ abstract class Seeder
      */
     private function isTableNameSet()
     {
-        if (!$this->table)
+        if (!$this->table) {
             throw new \Exception('Error: DynamoDB requires table name to be specified.');
+        }
     }
 
     /**
      *   Verify that at least one item is added.
+     * @throws \Exception
      */
     private function atLeastOneItemExist()
     {
-        if (count($this->items) == 0)
+        if (count($this->items) == 0) {
             throw new \Exception('Error: No data to be seeded.');
+        }
     }
 
     /**
@@ -97,6 +100,7 @@ abstract class Seeder
 
     /**
      * Check if there are multiple items.
+     * return bool
      */
     private function isBatchRequest()
     {
@@ -105,11 +109,13 @@ abstract class Seeder
 
     /**
      * Check to make sure batch items is not over limit (100).
+     * @throws \Exception
      */
     private function validateBatchItemsLimit()
     {
-        if(count($this->items) > 100)
+        if (count($this->items) > 100) {
             throw new \Exception('Maximum items that can be bacthed add is 100, limit exceeded.');
+        }
     }
 
     /**
@@ -118,7 +124,7 @@ abstract class Seeder
     private function displayCompletionMessage()
     {
         $className = get_class($this);
-        echo "{$className} seeded successfully". PHP_EOL;
+        echo "{$className} seeded successfully" . PHP_EOL;
         return true;
     }
 
@@ -127,6 +133,7 @@ abstract class Seeder
      *  If a single item is added, a simple putItem is used.
      *  If multiple items are added, then the batchWriteItem is used.
      *  NB: batchWriteItem can take maximum of 100 items per call.
+     * @throws \Exception
      */
     protected function save()
     {
@@ -134,32 +141,27 @@ abstract class Seeder
         $this->atLeastOneItemExist();
         $this->tableExist($this->table);
 
-        if ($this->isBatchRequest()) {
-            $this->validateBatchItemsLimit();
-
-            $items = [];
-            foreach ($this->items as $item) {
-                $items[$this->table][] = [
-                    'PutRequest' => [
-                        'Item' => $item
-                    ]
-               ];
-            }
-
-            $this->dynamoDBClient->batchWriteItem(
-                [
-                    'RequestItems' => $items   
-                ]
-            );
-        } else {
-            $this->dynamoDBClient->putItem(
-                [
-                    'TableName' => $this->table,
-                    'Item' => $this->items[0]
-                ]
-            );
+        if (!$this->isBatchRequest()) {
+            $this->dynamoDBClient->putItem([
+                'TableName' => $this->table,
+                'Item' => $this->items[0]
+            ]);
+            return $this->displayCompletionMessage();
         }
+
+
+        $this->validateBatchItemsLimit();
+        $items = [];
+        foreach ($this->items as $item) {
+            $items[$this->table][] = [
+                'PutRequest' => [
+                    'Item' => $item
+                ]
+            ];
+        }
+        $this->dynamoDBClient->batchWriteItem(['RequestItems' => $items]);
         return $this->displayCompletionMessage();
+
     }
 
     /**

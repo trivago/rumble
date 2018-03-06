@@ -1,16 +1,17 @@
-<?php 
+<?php
+
 namespace Rumble;
 
 abstract class Migration
 {
     /**
-        Dynamodb table params placeholder.
-    **/
+     * Dynamodb table params placeholder.
+     **/
     private $tableParams = [];
 
     /**
-        AWS DynamoDbClient.
-    **/
+     * AWS DynamoDbClient.
+     **/
     private $dynamoDBClient;
 
     /**
@@ -40,7 +41,8 @@ abstract class Migration
     protected function addAttribute(string $name, string $dataType)
     {
         $this->setAttributeDefinitions();
-        array_push($this->tableParams['AttributeDefinitions'], ['AttributeName' => $name,'AttributeType' => $dataType]);
+        array_push($this->tableParams['AttributeDefinitions'],
+            ['AttributeName' => $name, 'AttributeType' => $dataType]);
         return $this;
     }
 
@@ -62,7 +64,7 @@ abstract class Migration
     protected function addRange(string $attributeName)
     {
         $this->setKeySchema();
-        array_push($this->tableParams['KeySchema'],  ['AttributeName' => $attributeName, 'KeyType' => 'HASH']);
+        array_push($this->tableParams['KeySchema'], ['AttributeName' => $attributeName, 'KeyType' => 'HASH']);
         return $this;
     }
 
@@ -88,13 +90,15 @@ abstract class Migration
         return $this;
     }
 
-     /**
-      * Set the AttributeDefinition to an empty array.
-      * This will make setting the attributes easier.
+    /**
+     * Set the AttributeDefinition to an empty array.
+     * This will make setting the attributes easier.
      */
     private function setAttributeDefinitions()
     {
-        if (!isset($this->tableParams['AttributeDefinitions'])) $this->tableParams['AttributeDefinitions'] = [];
+        if (!isset($this->tableParams['AttributeDefinitions'])) {
+            $this->tableParams['AttributeDefinitions'] = [];
+        }
     }
 
     /**
@@ -103,42 +107,51 @@ abstract class Migration
      */
     private function setKeySchema()
     {
-        if (!isset($this->tableParams['KeySchema'])) $this->tableParams['KeySchema'] = [];
+        if (!isset($this->tableParams['KeySchema'])) {
+            $this->tableParams['KeySchema'] = [];
+        }
     }
 
     /**
      *  Verify that the TableName param is set.
      *  This is a mandatory param, just like the hash key.
+     * @throws \Exception
      */
     private function isTableNameSet()
     {
-        if (!isset($this->tableParams['TableName']))
+        if (!isset($this->tableParams['TableName'])) {
             throw new \Exception('Error: DynamoDB requires table name to be specified.');
+        }
     }
 
     /**
      *  Very that a valid primary key was added with a corresponding valid
      *  attribute name.
+     * @throws \Exception
      */
     private function isHashSet()
     {
         $hashKeysFound = [];
         foreach ($this->tableParams['KeySchema'] as $key) {
-            if ('HASH' == $key['KeyType'])
+            if ('HASH' == $key['KeyType']) {
                 $hashKeysFound[] = $key;
+            }
         }
 
-        if (count($hashKeysFound) != 1)
+        if (count($hashKeysFound) != 1) {
             throw new \Exception('Error: DynamoDB requires at least a simple primary key.');
-        
+        }
+
         $attributesFound = [];
         foreach ($this->tableParams['AttributeDefinitions'] as $definition) {
-            if ($hashKeysFound[0]['AttributeName'] == $definition['AttributeName'])
+            if ($hashKeysFound[0]['AttributeName'] == $definition['AttributeName']) {
                 $attributesFound[] = $definition;
+            }
         }
 
-        if (count($attributesFound) != 1)
-           throw new \Exception('Error: DynamoDB requires a matching attribute for a hash(primary) key.');
+        if (count($attributesFound) != 1) {
+            throw new \Exception('Error: DynamoDB requires a matching attribute for a hash(primary) key.');
+        }
     }
 
     /**
@@ -147,7 +160,9 @@ abstract class Migration
      */
     private function setProvisionedThroughput()
     {
-        if(!isset($this->tableParams['ProvisionedThroughput'])) $this->tableParams['ProvisionedThroughput'] = [];
+        if (!isset($this->tableParams['ProvisionedThroughput'])) {
+            $this->tableParams['ProvisionedThroughput'] = [];
+        }
     }
 
     /**
@@ -156,7 +171,7 @@ abstract class Migration
     private function displayCompletionMessage()
     {
         $className = get_class($this);
-        echo "{$className} Migrated successfully".PHP_EOL;
+        echo "{$className} Migrated successfully" . PHP_EOL;
         return true;
     }
 
@@ -172,6 +187,7 @@ abstract class Migration
 
     /**
      *  Create a new DynamoDB Table.
+     * @throws \Exception
      */
     protected function create()
     {
@@ -187,6 +203,7 @@ abstract class Migration
 
     /**
      *  Delete DynamoDB Table.
+     * @throws \Exception
      */
     protected function delete()
     {
@@ -198,6 +215,7 @@ abstract class Migration
 
     /**
      *  Update dynamoDB Table.
+     * @throws \Exception
      */
     protected function update()
     {
