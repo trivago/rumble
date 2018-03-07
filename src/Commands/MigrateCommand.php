@@ -29,23 +29,21 @@ class MigrateCommand extends Command
     protected function configure()
     {
         $this->setName('migrate')
-            ->setDescription('Creates and versions dynamoDB tables.')
-        ;
+            ->setDescription('Creates and versions dynamoDB tables.');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
+     * @return int|null|void
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             $classes = $this->getClasses($this->directory);
             $this->runMigration($classes);
-
-        } catch(\Exception $e) {
-            echo "Migration Error: {$e->getMessage()}".PHP_EOL;
-            exit();
+        } catch (\Exception $e) {
+            echo "Migration Error: {$e->getMessage()}" . PHP_EOL;
         }
     }
 
@@ -53,13 +51,15 @@ class MigrateCommand extends Command
      * Handle the "migrate" command.
      *
      * @param $classes
+     * @throws \Exception
      */
     private function runMigration($classes)
     {
-        $this->dynamoDBClient = DynamoDbClient::factory($this->getConfig());
+        $this->dynamoDBClient = new DynamoDbClient($this->getConfig());
 
-        if (!$this->isMigrationsTableExist())
+        if (!$this->isMigrationsTableExist()) {
             $this->createMigrationTable();
+        }
 
         $ranMigrations = $this->getRanMigrations();
         $pendingMigrations = $this->getPendingMigrations($classes, $ranMigrations);
@@ -76,19 +76,28 @@ class MigrateCommand extends Command
         }
     }
 
+    /**
+     * @param $classes
+     * @param $ranMigrations
+     * @return mixed
+     */
     private function getPendingMigrations($classes, $ranMigrations)
     {
         foreach ($ranMigrations as $ranMigration) {
             $key = array_search($ranMigration, $classes);
-            if ($key !== FALSE)
+            if ($key !== false) {
                 unset($classes[$key]);
+            }
         }
         return $classes;
     }
 
+    /**
+     * @return array
+     */
     private function getRanMigrations()
     {
-        $result =  $this->dynamoDBClient->scan([
+        $result = $this->dynamoDBClient->scan([
             'TableName' => 'migrations'
         ]);
 
@@ -101,12 +110,18 @@ class MigrateCommand extends Command
         return $ranMigrations;
     }
 
+    /**
+     * @return bool
+     */
     private function isMigrationsTableExist()
     {
         $tables = $this->dynamoDBClient->listTables();
         return in_array('migrations', $tables['TableNames']);
     }
 
+    /**
+     *
+     */
     private function createMigrationTable()
     {
         $this->dynamoDBClient->createTable([
@@ -120,16 +135,19 @@ class MigrateCommand extends Command
             'KeySchema' => [
                 [
                     'AttributeName' => 'migration',
-                    'KeyType'       => 'HASH'
+                    'KeyType' => 'HASH'
                 ]
             ],
             'ProvisionedThroughput' => [
-                'ReadCapacityUnits'  => 100,
+                'ReadCapacityUnits' => 100,
                 'WriteCapacityUnits' => 100
             ]
         ]);
     }
 
+    /**
+     * @param $migration
+     */
     private function addToRanMigrations($migration)
     {
         $this->dynamoDBClient->putItem([
