@@ -1,5 +1,7 @@
 # **Rumble**
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/22721b6e3ef841acbbf8927ace4fadfa)](https://app.codacy.com/app/murillo-freitas/rumble?utm_source=github.com&utm_medium=referral&utm_content=freitasmurillo/rumble&utm_campaign=badger)
+
 A php migration tool for AWS dynamoDB.
 
 ### **Requirements**
