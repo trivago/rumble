@@ -64,24 +64,10 @@ trait Resolver
      */
     protected function getConfig()
     {
-        if (!getenv("AWS_ACCESS_KEY_ID")
-            || !getenv("AWS_SECRET_ACCESS_KEY")
-            || !getenv("AWS_DYNAMO_REGION")
-            || !getenv("AWS_DYNAMO_ENDPOINT")
-            || !getenv("AWS_DYNAMO_VERSION")
-        ) {
-            throw new \Exception("The configuration variables are not set. Please set the environment variables.");
-        }
-
         return [
-            'credentials' => new Credentials(
-                getenv("AWS_ACCESS_KEY_ID"),
-                getenv("AWS_SECRET_ACCESS_KEY")
-            ),
             'region' => getenv("AWS_DYNAMO_REGION"),
             'endpoint' => getenv("AWS_DYNAMO_ENDPOINT"),
             'version' => getenv("AWS_DYNAMO_VERSION")
         ];
     }
-
 }

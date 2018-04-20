@@ -1,5 +1,5 @@
 {
-    "name": "freitasmurillo/rumble",
+    "name": "theinrich/rumble",
     "description": "A dynamodb migration tool",
     "type": "library",
     "minimum-stability": "stable",
@@ -17,6 +17,10 @@
         {
             "name": "Murillo Brendel Freitas",
             "email": "murillobrendelfreitas@gmail.com"
+        },
+        {
+            "name": "Torsten Heinrich",
+            "email": "t.heinrich@live.de"
         }
     ],
     "require": {
