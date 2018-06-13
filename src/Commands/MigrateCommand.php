@@ -24,12 +24,30 @@ class MigrateCommand extends Command
     private $directory = 'migrations';
 
     /**
+     * @var string
+     */
+    private $tableName = 'migrations';
+
+    /**
+     * @var integer
+     */
+    private $tableReadCapacity = 10;
+
+    /**
+     * @var integer
+     */
+    private $tableWriteCapacity = 10;
+
+    /**
      *
      */
     protected function configure()
     {
         $this->setName('migrate')
-            ->setDescription('Creates and versions dynamoDB tables.');
+            ->setDescription('Creates and versions dynamoDB tables.')
+            ->addArgument('table_name', InputArgument::OPTIONAL, 'Migrations table name (default: "migrations")?')
+            ->addArgument('table_read_capacity', InputArgument::OPTIONAL, 'Migrations table read capacity (default: 10)?')
+            ->addArgument('table_write_capacity', InputArgument::OPTIONAL, 'Migrations table write capacity (default: 10)?');
     }
 
     /**
@@ -40,6 +58,10 @@ class MigrateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
+            $this->tableName = $input->getArgument('table_name');
+            $this->tableReadCapacity = $input->getArgument('table_read_capacity');
+            $this->tableWriteCapacity = $input->getArgument('table_write_capacity');
+
             $classes = $this->getClasses($this->directory);
             $this->runMigration($classes);
         } catch (\Exception $e) {
@@ -98,7 +120,7 @@ class MigrateCommand extends Command
     private function getRanMigrations()
     {
         $result = $this->dynamoDBClient->scan([
-            'TableName' => 'migrations'
+            'TableName' => $this->tableName
         ]);
 
         $marsh = new Marshaler();
@@ -116,7 +138,7 @@ class MigrateCommand extends Command
     private function isMigrationsTableExist()
     {
         $tables = $this->dynamoDBClient->listTables();
-        return in_array('migrations', $tables['TableNames']);
+        return in_array($this->tableName, $tables['TableNames']);
     }
 
     /**
@@ -125,7 +147,7 @@ class MigrateCommand extends Command
     private function createMigrationTable()
     {
         $this->dynamoDBClient->createTable([
-            'TableName' => 'migrations',
+            'TableName' => $this->tableName,
             'AttributeDefinitions' => [
                 [
                     'AttributeName' => 'migration',
@@ -139,8 +161,8 @@ class MigrateCommand extends Command
                 ]
             ],
             'ProvisionedThroughput' => [
-                'ReadCapacityUnits' => 100,
-                'WriteCapacityUnits' => 100
+                'ReadCapacityUnits' => $this->tableReadCapacity,
+                'WriteCapacityUnits' => $this->tableWriteCapacity 
             ]
         ]);
     }
@@ -151,7 +173,7 @@ class MigrateCommand extends Command
     private function addToRanMigrations($migration)
     {
         $this->dynamoDBClient->putItem([
-            'TableName' => 'migrations',
+            'TableName' => $this->tableName,
             'Item' => [
                 'migration' => ['S' => $migration]
             ]
