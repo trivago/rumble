@@ -8,6 +8,7 @@ use Aws\DynamoDb\Marshaler;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Console\Input\InputArgument;
 
 class MigrateCommand extends Command
 {
@@ -58,9 +59,20 @@ class MigrateCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->tableName = $input->getArgument('table_name');
-            $this->tableReadCapacity = $input->getArgument('table_read_capacity');
-            $this->tableWriteCapacity = $input->getArgument('table_write_capacity');
+            $tableName = $input->getArgument('table_name');
+            if ($tableName) {
+                $this->tableName = $tableName;
+            }
+
+            $tableReadCapacity = $input->getArgument('table_read_capacity');
+            if ($tableReadCapacity) {
+                $this->tableReadCapacity = $tableReadCapacity;
+            }
+
+            $tableWriteCapacity = $input->getArgument('table_write_capacity');
+            if ($tableWriteCapacity) {
+                $this->tableWriteCapacity = $tableWriteCapacity;
+            }
 
             $classes = $this->getClasses($this->directory);
             $this->runMigration($classes);
@@ -162,7 +174,7 @@ class MigrateCommand extends Command
             ],
             'ProvisionedThroughput' => [
                 'ReadCapacityUnits' => $this->tableReadCapacity,
-                'WriteCapacityUnits' => $this->tableWriteCapacity 
+                'WriteCapacityUnits' => $this->tableWriteCapacity
             ]
         ]);
     }
