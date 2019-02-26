@@ -6,6 +6,8 @@ use Rumble\Resolver;
 use Aws\DynamoDb\Marshaler;
 use Aws\DynamoDb\DynamoDbClient;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class SeedCommand extends Command
 {
@@ -26,7 +28,7 @@ class SeedCommand extends Command
             ->setDescription('Seeds dynamoDb tables with sample data.');
     }
 
-    protected function execute()
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             $classes = $this->getClasses($this->directory);

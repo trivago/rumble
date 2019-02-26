@@ -25,8 +25,9 @@ trait Resolver
         while (false != ($file = readdir($dirHandler))) {
             if ($file != "." && $file != "..") {
                 if (is_dir("{$dir}/{$file}")) {
-                    return self::getClasses("{$dir}/{$file}");
+                    return self::getClasses("{$dir}/{$file}");  // recursive call
                 }
+
                 require_once("{$dir}/{$file}");
                 $classes[] = $this->buildClass($file);;
             }
@@ -36,6 +37,8 @@ trait Resolver
         if (count($classes) == 0) {
             throw new \Exception("There are no {$dir} files run.");
         }
+
+        sort($classes);
         return $classes;
     }
 
