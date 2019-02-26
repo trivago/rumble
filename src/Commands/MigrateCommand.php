@@ -75,6 +75,11 @@ class MigrateCommand extends Command
             }
 
             $classes = $this->getClasses($this->directory);
+
+            foreach($classes as $clazz) {
+                $output->writeln("Migration resource found: {$clazz}");
+            }
+
             $this->runMigration($classes);
         } catch (\Exception $e) {
             echo "Migration Error: {$e->getMessage()}" . PHP_EOL;
