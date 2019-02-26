@@ -76,7 +76,7 @@ class MigrateCommand extends Command
 
             $classes = $this->getClasses($this->directory);
 
-            foreach($classes as $clazz) {
+            foreach ($classes as $clazz) {
                 $output->writeln("Migration resource found: {$clazz}");
             }
 
