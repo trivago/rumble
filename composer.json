@@ -1,5 +1,5 @@
 {
-    "name": "theinrich/rumble",
+    "name": "trivago/rumble",
     "description": "A dynamodb migration tool",
     "type": "library",
     "minimum-stability": "stable",
